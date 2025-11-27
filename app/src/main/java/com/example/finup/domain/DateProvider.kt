@@ -31,7 +31,7 @@ interface DateProvider {
 }
 
 @SuppressLint("NewApi")
-class RealProviderBase(
+class DateProviderImpl(
     private val locale: Locale = Locale.getDefault(),
     private val clock: Clock = Clock.systemDefaultZone(),
 ) : All {
@@ -61,9 +61,8 @@ class RealProviderBase(
 }
 
 @SuppressLint("NewApi")
-class MockProviderBase(
+class FakeDateProviderImpl(
     private val locale: Locale = Locale.getDefault(),
-    private val clock: Clock = Clock.systemDefaultZone(),
 ) : All {
 
     override fun getCurrentYear() = 2025

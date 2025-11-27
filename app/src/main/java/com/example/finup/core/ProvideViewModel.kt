@@ -18,8 +18,8 @@ import com.example.finup.data.repositories.Now
 import com.example.finup.data.repositories.SettingsStateRepositoryImpl
 import com.example.finup.data.repositories.TransactionRepositoryImpl
 import com.example.finup.data.repositories.YearMonthRepositoryImpl
-import com.example.finup.domain.MockProviderBase
-import com.example.finup.domain.RealProviderBase
+import com.example.finup.domain.FakeDateProviderImpl
+import com.example.finup.domain.DateProviderImpl
 import com.example.finup.domain.StateManager
 import com.example.finup.domain.useCases.GetOrCreatePeriodUseCase
 import com.example.finup.domain.useCases.GetTransactionsListByPeriodUseCase
@@ -39,17 +39,17 @@ interface ProvideViewModel {
         private val transactionListWrapper = TransactionsListLiveDataWrapper.Base()
         private val transactionListUiStateWrapper = TransactionListUiStateWrapper.Base()
         private val transactionMapper = TransactionUiMapper.Base()
-        private val realDateProvider = RealProviderBase()
-        private val mockDateProviderForUiTests = MockProviderBase() //for Ui Test, Please use that if you want to run Ui Tests
+        private val dateProvider = DateProviderImpl()
+        private val fakeDateProvider = FakeDateProviderImpl() //for Ui Tests, Please use that if you want to run Ui Tests
         private val transactionRepository = TransactionRepositoryImpl(transactionDao, now)
         private val yearMonthRepository = YearMonthRepositoryImpl(yearMonthDao, now)
         private val navigationMonthUseCase = NavigationMonthUseCase.Base(yearMonthRepository)
         private val getTransactionsListByPeriodUseCase =
-            GetTransactionsListByPeriodUseCase.Base(transactionRepository, mockDateProviderForUiTests)
+            GetTransactionsListByPeriodUseCase.Base(transactionRepository, dateProvider)
         private val getOrCreatePeriodUseCase = GetOrCreatePeriodUseCase.Base(yearMonthRepository)
         private val navigation = Navigation.Base()
         private val yearMonthStateRepository = SettingsStateRepositoryImpl(dataStoreManager)
-        private val stateManager = StateManager.Base(yearMonthRepository,  yearMonthStateRepository,mockDateProviderForUiTests)
+        private val stateManager = StateManager.Base(yearMonthRepository,  yearMonthStateRepository,fakeDateProvider)
         private val stateLiveDataWrapper = SelectedStateWrapper.Base()
         override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
             return when (modelClass) {
@@ -70,7 +70,7 @@ interface ProvideViewModel {
                     getOrCreatePeriodUseCase,
                     navigation,
                     stateLiveDataWrapper,
-                    realDateProvider,
+                    dateProvider,
                 )
 
                 else -> throw IllegalStateException("view Model doesnt exist, please watch provideVIewModel")

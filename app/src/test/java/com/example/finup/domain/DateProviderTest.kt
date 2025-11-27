@@ -18,7 +18,7 @@ class DateProviderTest {
 
         )
         val locale = Locale.ENGLISH
-        val dateProvider = RealProviderBase(locale,fixedClock)
+        val dateProvider = DateProviderImpl(locale,fixedClock)
         val currentYear = dateProvider.getCurrentYear()
         val expectedYear = 2025
         assertEquals(expectedYear,currentYear)
