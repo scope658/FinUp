@@ -1,5 +1,5 @@
 FinUp - Budget and Finance Tracker
-FinUp is a Kotlin-based Android application for monthly tracking of incomes and expenses. The project was developed with an attempt to follow TDD (Test-Driven Development) principles.
+FinUp is a Kotlin-based Android application for monthly tracking of incomes and expenses.
 
 🛠️ Application Features
 Monthly Budgeting: Calculation and display of total income and expense for the current month.
@@ -8,26 +8,26 @@ Month Navigation: Ability to navigate to data from previous and future periods t
 
 Financial Management (CRUD Operations): Full management of incomes and expenses, including Creation, Editing, and Deletion of transactions.
 
-Interface: Design based on Material Components and XML.
+Interface: Design based on Material Components and View.
 
 💻 Tech Stack and Testing - 
 
 Technology -
 1. Language - Kotlin
-2. UI - XML
+2. UI - View
 3. Architecture - MVVM, Manual DI
 4. Unit Testing - JUnit
 5. UI Testing -	Espresso
 6. Jetpack	ViewModel, LiveData
-8. Data Persistence - Room, DataStore
-9. Asynchrony	- Coroutines
-10. And i used Robolectric only for mock Bundle
+7. Data Persistence - Room, DataStore
+8. Asynchrony	- Coroutines
+9. Robolectric for mock Bundle
 
 ⚙️ Build and Run Instructions
 
 Clone the repository: 
 
-git clone https://github.com/shiroyoshaa/FinUp.git
+git clone https://github.com/scope658/FinUp.git
 
 Open the project in Android Studio and wait for Gradle to sync.
 
@@ -38,13 +38,15 @@ To successfully run UI tests, they must be isolated from external factors like s
 
 Important Step:
 
-You need to open the ProvideViewModel.Base class and manually change the time provider being used: instead of RealProviderBase, you should use mockDateProviderForUiTests to inject static (mocked) time into the components.
+You need to open the ProvideViewModel.Base class and manually change the time provider being used: instead of DateProviderImpl, you should use FakeDateProviderImpl to inject fake time into the components.
 
-Espresso UI Test: navigation to previous month test.
+Screenshots ->
 
-<p align="center">
-  <img src="https://github.com/user-attachments/assets/0f7f5d6c-1a1b-421a-974b-5644dad1ab5a" width="50%">
-</p>
+| Expenses page | Incomes page | Create page | Edit page |
+|---------------|------------|------------|--------------|
+| <img src="screenshots/expensesPage.png" width="250"/> | <img src="screenshots/incomesPage.png" width="250"/> | <img src="screenshots/createPage.png" width="250"/> | <img src="screenshots/editPage.png" width="250"/> |
+
+
 
 
 
