@@ -1,6 +1,6 @@
 package com.example.finup.main
 
-import com.example.finup.Transactions.list.TransactionsListScreen
+import com.example.finup.Transactions.list.presentation.TransactionsListScreen
 import com.example.finup.core.FakeNavigation
 import com.example.finup.core.Order
 import org.junit.Before

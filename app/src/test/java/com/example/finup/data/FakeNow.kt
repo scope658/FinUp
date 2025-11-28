@@ -1,6 +1,6 @@
 package com.example.finup.data
 
-import com.example.finup.data.repositories.Now
+import com.example.finup.core.data.Now
 
 interface FakeNow : Now {
     class Base(private var time: Long) : FakeNow {

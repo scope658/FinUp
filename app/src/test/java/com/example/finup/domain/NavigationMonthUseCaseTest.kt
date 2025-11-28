@@ -1,8 +1,8 @@
 package com.example.finup.domain
 
-import com.example.finup.domain.models.YearMonth
-import com.example.finup.domain.repositories.YearMonthRepository
-import com.example.finup.domain.useCases.NavigationMonthUseCase
+import com.example.finup.createEdit.domain.YearMonth
+import com.example.finup.createEdit.domain.YearMonthRepository
+import com.example.finup.Transactions.list.domain.NavigationMonthUseCase
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
