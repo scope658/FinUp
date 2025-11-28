@@ -10,20 +10,14 @@ import com.example.finup.Transactions.list.FakeYearMonthStateManager.Companion.G
 import com.example.finup.Transactions.list.FakeYearMonthStateManager.Companion.RESTORE_SCREEN_TYPE_MANAGER
 import com.example.finup.Transactions.list.FakeYearMonthStateManager.Companion.SAVE_SCREEN_TYPE_MANAGER
 import com.example.finup.Transactions.list.FakeYearMonthStateManager.Companion.SAVE_YEAR_MONTH_MANAGER
-import com.example.finup.Transactions.list.presentation.TransactionUiMapper
-import com.example.finup.core.FakeNavigation
-import com.example.finup.core.Order
-import com.example.finup.Transactions.list.domain.StateManager
-import com.example.finup.Transactions.list.domain.Result
-import com.example.finup.Transactions.list.domain.Transaction
-import com.example.finup.createEdit.domain.YearMonth
 import com.example.finup.Transactions.list.domain.GetTransactionsListByPeriodUseCase
+import com.example.finup.Transactions.list.domain.NavigationMonthUseCase
 import com.example.finup.Transactions.list.presentation.DisplayItemUi
-import com.example.finup.Transactions.list.presentation.ShowDateTitle
-import com.example.finup.Transactions.list.presentation.TransactionListUiStateWrapper
 import com.example.finup.Transactions.list.presentation.TransactionsListLiveDataWrapper
 import com.example.finup.Transactions.list.presentation.TransactionsListViewModel
-import com.example.finup.Transactions.list.domain.NavigationMonthUseCase
+import com.example.finup.core.FakeNavigation
+import com.example.finup.core.Order
+import com.example.finup.createEdit.domain.YearMonth
 import junit.framework.TestCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
@@ -32,7 +26,12 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
-
+import com.example.finup.Transactions.list.domain.Result
+import com.example.finup.Transactions.list.domain.StateManager
+import com.example.finup.Transactions.list.domain.Transaction
+import com.example.finup.Transactions.list.presentation.ShowDateTitle
+import com.example.finup.Transactions.list.presentation.TransactionListUiStateWrapper
+import com.example.finup.Transactions.list.presentation.TransactionUiMapper
 
 @RunWith(RobolectricTestRunner::class)
 class TransactionsListViewModelTest {
@@ -408,7 +407,7 @@ private interface FakeGetTransactionsListByPeriodUseCase : GetTransactionsListBy
 
     class Base(private val order: Order) : FakeGetTransactionsListByPeriodUseCase {
 
-        private lateinit var expectedResult: Result
+        private lateinit var expectedResult: com.example.finup.Transactions.list.domain.Result
         private lateinit var actualYearMonth: YearMonth
         private lateinit var actualType: String
 
@@ -475,7 +474,7 @@ private interface FakeTransactionMapper : TransactionUiMapper.ToUiLayer {
         private var actualCalledTimes: Int = 0
         override fun toUiLayer(
             transactions: List<Transaction>,
-            formattedMonth: String
+            month: String
         ): List<DisplayItemUi> {
             actualCalledTimes++
             order.add(TRANSACTIONS_MAPPER)
