@@ -1,7 +1,7 @@
 package com.example.finup.data
 
-import com.example.finup.data.repositories.SettingsStateRepositoryImpl
-import com.example.finup.domain.DataStoreManager
+import com.example.finup.Transactions.list.data.SettingsStateRepositoryImpl
+import com.example.finup.Transactions.list.domain.DataStoreManager
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Before

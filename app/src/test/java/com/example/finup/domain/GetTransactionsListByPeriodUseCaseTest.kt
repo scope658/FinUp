@@ -1,10 +1,11 @@
 package com.example.finup.domain
 
-import com.example.finup.domain.models.Result
-import com.example.finup.domain.models.Transaction
-import com.example.finup.domain.models.YearMonth
-import com.example.finup.domain.repositories.TransactionRepository
-import com.example.finup.domain.useCases.GetTransactionsListByPeriodUseCase
+import com.example.finup.createEdit.domain.DateProvider
+import com.example.finup.Transactions.list.domain.Result
+import com.example.finup.Transactions.list.domain.Transaction
+import com.example.finup.createEdit.domain.YearMonth
+import com.example.finup.Transactions.list.domain.TransactionRepository
+import com.example.finup.Transactions.list.domain.GetTransactionsListByPeriodUseCase
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Before

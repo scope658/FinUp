@@ -5,8 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelStoreOwner
 import com.example.finup.core.Core
 import com.example.finup.core.ProvideViewModel
-import com.example.finup.data.dataStore.DataStoreManagerImpl
-import com.example.finup.data.repositories.Now
+import com.example.finup.Transactions.list.data.DataStoreManagerImpl
+import com.example.finup.core.data.Now
 
 class App : Application(), ProvideViewModel {
     lateinit var factory: ProvideViewModel

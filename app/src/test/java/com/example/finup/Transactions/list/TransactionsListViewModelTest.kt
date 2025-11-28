@@ -2,7 +2,7 @@ package com.example.finup.Transactions.list
 
 
 import androidx.lifecycle.LiveData
-import com.example.finup.Transactions.createEdit.CreateEditTransactionScreen
+import com.example.finup.createEdit.presentation.CreateEditTransactionScreen
 import com.example.finup.Transactions.list.FakeTransactionMapper.Companion.TRANSACTIONS_MAPPER
 import com.example.finup.Transactions.list.FakeTransactionsListLiveDataWrapper.Companion.TRANSACTION_UPDATE_LIST_LIVEDATA
 import com.example.finup.Transactions.list.FakeUiStateLiveDataWrapper.Companion.UI_STATE_UPDATE_LIVEDATA
@@ -10,15 +10,20 @@ import com.example.finup.Transactions.list.FakeYearMonthStateManager.Companion.G
 import com.example.finup.Transactions.list.FakeYearMonthStateManager.Companion.RESTORE_SCREEN_TYPE_MANAGER
 import com.example.finup.Transactions.list.FakeYearMonthStateManager.Companion.SAVE_SCREEN_TYPE_MANAGER
 import com.example.finup.Transactions.list.FakeYearMonthStateManager.Companion.SAVE_YEAR_MONTH_MANAGER
-import com.example.finup.Transactions.mappers.TransactionUiMapper
+import com.example.finup.Transactions.list.presentation.TransactionUiMapper
 import com.example.finup.core.FakeNavigation
 import com.example.finup.core.Order
-import com.example.finup.domain.StateManager
-import com.example.finup.domain.models.Result
-import com.example.finup.domain.models.Transaction
-import com.example.finup.domain.models.YearMonth
-import com.example.finup.domain.useCases.GetTransactionsListByPeriodUseCase
-import com.example.finup.domain.useCases.NavigationMonthUseCase
+import com.example.finup.Transactions.list.domain.StateManager
+import com.example.finup.Transactions.list.domain.Result
+import com.example.finup.Transactions.list.domain.Transaction
+import com.example.finup.createEdit.domain.YearMonth
+import com.example.finup.Transactions.list.domain.GetTransactionsListByPeriodUseCase
+import com.example.finup.Transactions.list.presentation.DisplayItemUi
+import com.example.finup.Transactions.list.presentation.ShowDateTitle
+import com.example.finup.Transactions.list.presentation.TransactionListUiStateWrapper
+import com.example.finup.Transactions.list.presentation.TransactionsListLiveDataWrapper
+import com.example.finup.Transactions.list.presentation.TransactionsListViewModel
+import com.example.finup.Transactions.list.domain.NavigationMonthUseCase
 import junit.framework.TestCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking

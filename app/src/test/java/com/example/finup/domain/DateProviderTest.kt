@@ -1,5 +1,6 @@
 package com.example.finup.domain
 
+import com.example.finup.createEdit.domain.DateProviderImpl
 import junit.framework.TestCase.assertEquals
 import org.junit.Test
 import java.time.Clock
@@ -18,7 +19,7 @@ class DateProviderTest {
 
         )
         val locale = Locale.ENGLISH
-        val dateProvider = DateProviderImpl(locale,fixedClock)
+        val dateProvider = DateProviderImpl(locale, fixedClock)
         val currentYear = dateProvider.getCurrentYear()
         val expectedYear = 2025
         assertEquals(expectedYear,currentYear)

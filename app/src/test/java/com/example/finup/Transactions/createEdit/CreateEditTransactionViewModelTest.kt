@@ -2,15 +2,20 @@ package com.example.finup.Transactions.createEdit
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.finup.Transactions.list.TransactionsListScreen
+import com.example.finup.Transactions.list.presentation.TransactionsListScreen
 import com.example.finup.core.FakeNavigation
 import com.example.finup.core.FakeNavigation.Companion.NAVIGATION
 import com.example.finup.core.Order
-import com.example.finup.domain.DateProvider
-import com.example.finup.domain.models.Transaction
-import com.example.finup.domain.models.YearMonth
-import com.example.finup.domain.repositories.TransactionRepository
-import com.example.finup.domain.useCases.GetOrCreatePeriodUseCase
+import com.example.finup.createEdit.domain.DateProvider
+import com.example.finup.Transactions.list.domain.Transaction
+import com.example.finup.createEdit.domain.YearMonth
+import com.example.finup.Transactions.list.domain.TransactionRepository
+import com.example.finup.createEdit.domain.GetOrCreatePeriodUseCase
+import com.example.finup.createEdit.presentation.CreateEditTransactionViewModel
+import com.example.finup.createEdit.presentation.CreateEditUiState
+import com.example.finup.createEdit.presentation.CreateEditUiStateWrapper
+import com.example.finup.createEdit.presentation.SelectedStateUi
+import com.example.finup.createEdit.presentation.SelectedStateWrapper
 import kotlinx.coroutines.Dispatchers
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -104,7 +109,7 @@ class CreateEditTransactionViewModelTest {
 
     @Test
     fun `create transaction test`() {
-        var mockedLiveData = MutableLiveData(SelectedStateUi("Utilities",3000,25,10,2025))
+        var mockedLiveData = MutableLiveData(SelectedStateUi("Utilities", 3000, 25, 10, 2025))
         selectedStateLiveDataWrapper.mockingLiveData(mockedLiveData)
         getOrCreatePeriodUseCase.expectedYearMonth(YearMonth(1L, 10, 2025))
 
@@ -130,7 +135,15 @@ class CreateEditTransactionViewModelTest {
 
     @Test
     fun `edit transaction test`() {
-        val mockLiveData = MutableLiveData(SelectedStateUi(selectedCategory = "Other",5000,15,12,2025))
+        val mockLiveData = MutableLiveData(
+            SelectedStateUi(
+                selectedCategory = "Other",
+                5000,
+                15,
+                12,
+                2025
+            )
+        )
         selectedStateLiveDataWrapper.mockingLiveData(mockLiveData)
         getOrCreatePeriodUseCase.expectedYearMonth(YearMonth(5L, 12, 2025))
 

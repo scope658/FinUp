@@ -1,9 +1,9 @@
 package com.example.finup.data
 
-import com.example.finup.data.db.dao.YearMonthDao
-import com.example.finup.data.db.entities.YearMonthCache
-import com.example.finup.data.repositories.YearMonthRepositoryImpl
-import com.example.finup.domain.models.YearMonth
+import com.example.finup.Transactions.list.data.db.dao.YearMonthDao
+import com.example.finup.Transactions.list.data.db.entities.YearMonthCache
+import com.example.finup.createEdit.data.YearMonthRepositoryImpl
+import com.example.finup.createEdit.domain.YearMonth
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Before

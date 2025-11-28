@@ -1,10 +1,10 @@
 package com.example.finup.Transactions.core
 
 import com.example.finup.data.FakeNow
-import com.example.finup.data.db.dao.TransactionDao
-import com.example.finup.data.db.entities.TransactionCache
-import com.example.finup.data.repositories.TransactionRepositoryImpl
-import com.example.finup.domain.models.Transaction
+import com.example.finup.Transactions.list.data.db.dao.TransactionDao
+import com.example.finup.Transactions.list.data.db.entities.TransactionCache
+import com.example.finup.Transactions.list.data.TransactionRepositoryImpl
+import com.example.finup.Transactions.list.domain.Transaction
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Before

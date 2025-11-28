@@ -1,7 +1,7 @@
 package com.example.finup.main
 
 import androidx.lifecycle.ViewModel
-import com.example.finup.Transactions.list.TransactionsListScreen
+import com.example.finup.Transactions.list.presentation.TransactionsListScreen
 
 
 class MainViewModel(private val navigation: Navigation.Mutable,

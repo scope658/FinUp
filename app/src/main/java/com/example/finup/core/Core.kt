@@ -2,7 +2,7 @@ package com.example.finup.core
 
 import android.content.Context
 import androidx.room.Room
-import com.example.finup.data.db.AppDataBase
+import com.example.finup.Transactions.list.data.db.AppDataBase
 
 class Core(context: Context) {
 
