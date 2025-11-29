@@ -4,8 +4,8 @@
     <string name="Expense">Расходы</string>
     <string name="income">Доходы</string>
     <string name="total">Сумма:</string>
-    <string name="CreateExpensePageTitle">Добавить Расход</string>
-    <string name="CreateIncomePageTitle">Добавить Доход</string>
+    <string name="CreateExpensePageTitle">Добавить расход</string>
+    <string name="CreateIncomePageTitle">Добавить доход</string>
     <string name="EditExpenseTitle">Редактировать расход</string>
     <string name="EditIncomeTitle">Редактировать доход</string>
     <string name="utilities">Коммуналка</string>

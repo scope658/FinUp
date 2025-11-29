@@ -2,26 +2,29 @@ package com.example.finup.Transactions.list.presentation
 
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewModelScope
 import com.example.finup.R
 import com.example.finup.core.ProvideViewModel
 import com.example.finup.databinding.TransactionsListPageBinding
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class TransactionsListFragment : Fragment(R.layout.transactions_list_page) {
 
     private var _binding: TransactionsListPageBinding? = null
     private val binding get() = _binding!!
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-
         _binding = TransactionsListPageBinding.bind(view)
         val viewModel =
             (activity as ProvideViewModel).getViewModel(this, TransactionsListViewModel::class.java)
-
-        viewModel.init()
-
+        startLoadTransactions(
+            {},
+            { viewModel.loadTransactions() })
         val adapter = TransactionsListAdapter {
             viewModel.editTransaction(it)
         }
@@ -36,22 +39,27 @@ class TransactionsListFragment : Fragment(R.layout.transactions_list_page) {
 
         val expenseId = view.findViewById<View>(R.id.expenseIcon)
         expenseId
-        val incomeId = R.id.incomeIcon
+
         binding.bottomNav.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.incomeIcon -> {
-                    viewModel.navigateToIncomes()
+                    startLoadTransactions(
+                        { viewModel.saveScreenType("Income") },
+                        { viewModel.loadTransactions() })
                     true
                 }
 
                 R.id.expenseIcon -> {
-                    viewModel.navigateToExpenses()
+                    startLoadTransactions(
+                        { viewModel.saveScreenType("Expense") },
+                        { viewModel.loadTransactions() })
                     true
                 }
 
                 else -> false
             }
         }
+
         binding.addFloatingButton.setOnClickListener {
             viewModel.createTransaction()
         }
@@ -83,9 +91,18 @@ class TransactionsListFragment : Fragment(R.layout.transactions_list_page) {
             binding.titleMonthTextView.text = it.title
             binding.titleSumTextView.text = it.total
         }
-
         viewModel.listLiveData().observe(viewLifecycleOwner) {
             adapter.addItems(it)
+        }
+    }
+
+    private fun startLoadTransactions(
+        saveScreenType: suspend () -> Unit,
+        loadTransactions: suspend () -> Unit,
+    ) {
+        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
+            saveScreenType()
+            loadTransactions()
         }
     }
 }

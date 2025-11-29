@@ -3,11 +3,8 @@ package com.example.finup.Transactions.list.presentation
 import com.example.finup.Transactions.list.domain.Transaction
 
 interface TransactionUiMapper {
-    interface ToUiLayer {
-        fun toUiLayer(transactions: List<Transaction>, month: String): List<DisplayItemUi>
-    }
-
-    class Base : ToUiLayer {
+    fun toUiLayer(transactions: List<Transaction>, month: String): List<DisplayItemUi>
+    class Base : TransactionUiMapper {
         override fun toUiLayer(
             transactions: List<Transaction>,
             month: String
