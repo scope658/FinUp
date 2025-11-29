@@ -22,7 +22,7 @@ import com.example.finup.createEdit.domain.FakeDateProviderImpl
 import com.example.finup.createEdit.domain.DateProviderImpl
 import com.example.finup.Transactions.list.domain.StateManager
 import com.example.finup.createEdit.domain.GetOrCreatePeriodUseCase
-import com.example.finup.Transactions.list.domain.GetTransactionsListByPeriodUseCase
+import com.example.finup.Transactions.list.domain.TransactionsListUseCase
 import com.example.finup.Transactions.list.domain.NavigationMonthUseCase
 import com.example.finup.main.MainViewModel
 import com.example.finup.main.Navigation
@@ -44,8 +44,8 @@ interface ProvideViewModel {
         private val transactionRepository = TransactionRepositoryImpl(transactionDao, now)
         private val yearMonthRepository = YearMonthRepositoryImpl(yearMonthDao, now)
         private val navigationMonthUseCase = NavigationMonthUseCase.Base(yearMonthRepository)
-        private val getTransactionsListByPeriodUseCase =
-            GetTransactionsListByPeriodUseCase.Base(transactionRepository, dateProvider)
+        private val transactionsListUseCase =
+            TransactionsListUseCase.Base(transactionRepository, dateProvider)
         private val getOrCreatePeriodUseCase = GetOrCreatePeriodUseCase.Base(yearMonthRepository)
         private val navigation = Navigation.Base()
         private val yearMonthStateRepository = SettingsStateRepositoryImpl(dataStoreManager)
@@ -58,7 +58,7 @@ interface ProvideViewModel {
                     transactionListWrapper,
                     transactionListUiStateWrapper,
                     transactionMapper,
-                    getTransactionsListByPeriodUseCase,
+                    transactionsListUseCase,
                     navigationMonthUseCase,
                     navigation,
                     stateManager

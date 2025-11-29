@@ -1,26 +1,22 @@
 package com.example.finup.Transactions.list.presentation
 
-import android.util.Log
-import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.finup.createEdit.presentation.CreateEditTransactionScreen
 import com.example.finup.Transactions.list.domain.StateManager
-import com.example.finup.Transactions.list.domain.GetTransactionsListByPeriodUseCase
+import com.example.finup.Transactions.list.domain.TransactionsListUseCase
 import com.example.finup.Transactions.list.domain.NavigationMonthUseCase
 import com.example.finup.main.Navigation
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 
 class TransactionsListViewModel(
     private val transactionsListWrapper: TransactionsListLiveDataWrapper.Mutable,
     private val uiStateLiveDataWrapper: TransactionListUiStateWrapper.Mutable,
     private val transactionMapper: TransactionUiMapper,
-    private val getTransactionsListByPeriodUseCase: GetTransactionsListByPeriodUseCase,
+    private val transactionsListUseCase: TransactionsListUseCase,
     private val navigationByMonthUseCase: NavigationMonthUseCase,
     private val navigation: Navigation.Update,
     private val stateManagerWrapper: StateManager.All,
@@ -32,7 +28,7 @@ class TransactionsListViewModel(
     suspend fun loadTransactions() {
         val currentYearMonth = stateManagerWrapper.restoreYearMonth()
         val currentScreenType = stateManagerWrapper.restoreCurrentScreenType()
-        val result = getTransactionsListByPeriodUseCase(currentYearMonth, currentScreenType)
+        val result = transactionsListUseCase(currentYearMonth, currentScreenType)
         withContext(dispatcherMain) {
             val transactionListUi = transactionMapper.toUiLayer(
                 result.listTransactions,
@@ -55,7 +51,7 @@ class TransactionsListViewModel(
             val currentScreenType = stateManagerWrapper.restoreCurrentScreenType()
             val navigatedYearMonth = navigationByMonthUseCase(currentYearMonth, forward)
             stateManagerWrapper.saveYearMonthState(navigatedYearMonth.id)
-            val result = getTransactionsListByPeriodUseCase(navigatedYearMonth, currentScreenType)
+            val result = transactionsListUseCase(navigatedYearMonth, currentScreenType)
             withContext(dispatcherMain) {
                 val transactionListUi = transactionMapper.toUiLayer(
                     result.listTransactions,

@@ -5,7 +5,7 @@ import com.example.finup.Transactions.list.domain.Result
 import com.example.finup.Transactions.list.domain.Transaction
 import com.example.finup.createEdit.domain.YearMonth
 import com.example.finup.Transactions.list.domain.TransactionRepository
-import com.example.finup.Transactions.list.domain.GetTransactionsListByPeriodUseCase
+import com.example.finup.Transactions.list.domain.TransactionsListUseCase
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -14,7 +14,7 @@ import org.junit.Test
 
 class GetTransactionsListByPeriodUseCaseTest {
 
-    private lateinit var getTransactionsListByPeriodUseCase: GetTransactionsListByPeriodUseCase
+    private lateinit var transactionsListUseCase: TransactionsListUseCase
     private lateinit var dateProvider: FakeDateProvider
     private lateinit var transactionRepository: FakeReadTransactionRepository
 
@@ -23,8 +23,8 @@ class GetTransactionsListByPeriodUseCaseTest {
         dateProvider = FakeDateProvider.Base()
         transactionRepository = FakeReadTransactionRepository.Base()
         dateProvider.expectedFormattedDate("December 2026")
-        getTransactionsListByPeriodUseCase =
-            GetTransactionsListByPeriodUseCase.Base(transactionRepository, dateProvider)
+        transactionsListUseCase =
+            TransactionsListUseCase.Base(transactionRepository, dateProvider)
     }
     @Test
     fun `test with expected transactions list`() = runBlocking {
@@ -47,7 +47,7 @@ class GetTransactionsListByPeriodUseCaseTest {
                 )
             )
         )
-        val actualResult = getTransactionsListByPeriodUseCase(YearMonth(3L, 12, 2026), "Expense")
+        val actualResult = transactionsListUseCase(YearMonth(3L, 12, 2026), "Expense")
         val expectedResult = Result(
             listOf(
                 Transaction(
@@ -76,7 +76,7 @@ class GetTransactionsListByPeriodUseCaseTest {
     @Test
     fun`test without expected transactions list`() = runBlocking{
         transactionRepository.expectedTransactions(listOf())
-        val actualResult =  getTransactionsListByPeriodUseCase(YearMonth(3L, 12, 2026), "Expense")
+        val actualResult =  transactionsListUseCase(YearMonth(3L, 12, 2026), "Expense")
         val expectedResult = Result(listOf(), "December 2026", "0")
         assertEquals(actualResult,expectedResult)
     }

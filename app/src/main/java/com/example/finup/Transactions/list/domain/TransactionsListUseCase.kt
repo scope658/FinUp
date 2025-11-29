@@ -3,7 +3,7 @@ package com.example.finup.Transactions.list.domain
 import com.example.finup.createEdit.domain.DateProvider
 import com.example.finup.createEdit.domain.YearMonth
 
-interface GetTransactionsListByPeriodUseCase {
+interface TransactionsListUseCase {
 
     suspend operator fun invoke(yearMonth: YearMonth, type: String): Result
 
@@ -12,7 +12,7 @@ interface GetTransactionsListByPeriodUseCase {
         private val dateProvider: DateProvider.FormatDate
     ) :
 
-        GetTransactionsListByPeriodUseCase {
+        TransactionsListUseCase {
 
         override suspend fun invoke(yearMonth: YearMonth, type: String): Result {
 
