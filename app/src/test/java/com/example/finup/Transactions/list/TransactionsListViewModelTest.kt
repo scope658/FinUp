@@ -78,7 +78,7 @@ class TransactionsListViewModelTest {
     }
 
     @Test
-    fun `load transactions test`() = runBlocking {
+    fun `load transactions test`() {
         mock()
         viewModel.loadTransactions()
         stateManagerWrapper.checkRestoreYearMonthCalled(1)
@@ -150,6 +150,7 @@ class TransactionsListViewModelTest {
         )
         navigation.check(CreateEditTransactionScreen(screenType = "Edit", 2L, "Income"))
     }
+
     @Test
     fun `save screen type`() {
         viewModel.saveScreenType("Income")

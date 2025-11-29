@@ -10,6 +10,8 @@ import com.example.finup.main.Navigation
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 
 class TransactionsListViewModel(
@@ -24,24 +26,28 @@ class TransactionsListViewModel(
     private val dispatcherMain: CoroutineDispatcher = Dispatchers.Main,
 ) : ViewModel() {
 
-
-    suspend fun loadTransactions() {
-        val currentYearMonth = stateManagerWrapper.restoreYearMonth()
-        val currentScreenType = stateManagerWrapper.restoreCurrentScreenType()
-        val result = transactionsListUseCase(currentYearMonth, currentScreenType)
-        withContext(dispatcherMain) {
-            val transactionListUi = transactionMapper.toUiLayer(
-                result.listTransactions,
-                result.formattedDateYearMonth
-            )
-            transactionsListWrapper.update(transactionListUi)
-            uiStateLiveDataWrapper.update(
-                TransactionsListUiState(
-                    screenType = currentScreenType,
-                    title = result.formattedDateYearMonth,
-                    total = result.totalSumByMonth,
-                )
-            )
+    val mutex = Mutex()
+    fun loadTransactions() {
+        viewModelScope.launch(dispatcher) {
+            mutex.withLock {
+                val currentYearMonth = stateManagerWrapper.restoreYearMonth()
+                val currentScreenType = stateManagerWrapper.restoreCurrentScreenType()
+                val result = transactionsListUseCase(currentYearMonth, currentScreenType)
+                withContext(dispatcherMain) {
+                    val transactionListUi = transactionMapper.toUiLayer(
+                        result.listTransactions,
+                        result.formattedDateYearMonth
+                    )
+                    transactionsListWrapper.update(transactionListUi)
+                    uiStateLiveDataWrapper.update(
+                        TransactionsListUiState(
+                            screenType = currentScreenType,
+                            title = result.formattedDateYearMonth,
+                            total = result.totalSumByMonth,
+                        )
+                    )
+                }
+            }
         }
     }
 
@@ -82,11 +88,11 @@ class TransactionsListViewModel(
 
     fun saveScreenType(screenType: String) {
         viewModelScope.launch(dispatcher) {
-            stateManagerWrapper.saveCurrentScreenType(screenType)
+            mutex.withLock {
+                stateManagerWrapper.saveCurrentScreenType(screenType)
+            }
         }
-
     }
-
 
     fun createTransaction() {
         viewModelScope.launch(dispatcher) {

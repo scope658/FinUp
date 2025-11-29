@@ -22,9 +22,7 @@ class TransactionsListFragment : Fragment(R.layout.transactions_list_page) {
         _binding = TransactionsListPageBinding.bind(view)
         val viewModel =
             (activity as ProvideViewModel).getViewModel(this, TransactionsListViewModel::class.java)
-        startLoadTransactions(
-            {},
-            { viewModel.loadTransactions() })
+        viewModel.loadTransactions()
         val adapter = TransactionsListAdapter {
             viewModel.editTransaction(it)
         }
@@ -43,16 +41,15 @@ class TransactionsListFragment : Fragment(R.layout.transactions_list_page) {
         binding.bottomNav.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.incomeIcon -> {
-                    startLoadTransactions(
-                        { viewModel.saveScreenType("Income") },
-                        { viewModel.loadTransactions() })
+
+                    viewModel.saveScreenType("Income")
+                    viewModel.loadTransactions()
                     true
                 }
 
                 R.id.expenseIcon -> {
-                    startLoadTransactions(
-                        { viewModel.saveScreenType("Expense") },
-                        { viewModel.loadTransactions() })
+                    viewModel.saveScreenType("Expense")
+                    viewModel.loadTransactions()
                     true
                 }
 
@@ -96,13 +93,4 @@ class TransactionsListFragment : Fragment(R.layout.transactions_list_page) {
         }
     }
 
-    private fun startLoadTransactions(
-        saveScreenType: suspend () -> Unit,
-        loadTransactions: suspend () -> Unit,
-    ) {
-        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
-            saveScreenType()
-            loadTransactions()
-        }
-    }
 }
