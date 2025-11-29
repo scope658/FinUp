@@ -64,33 +64,17 @@ class CreateEditTransactionViewModelTest {
 
     @Test
     fun `init for edit transaction page test`() {
-        transactionRepository.expectedTransaction(
-            Transaction(
-                id = 1L,
-                sum = 5000,
-                name = "Other",
-                type = "Expense",
-                day = 15,
-                dateId = 5L
-            )
-        )
-        getOrCreatePeriodUseCase.expectedYearMonth(YearMonth(5L, 10, 2025))
+        transactionRepository.expectedTransaction(expectedTransaction)
+        getOrCreatePeriodUseCase.expectedYearMonth(expectedYearMonth)
         viewModel.editInit(title = "Edit Expense", transactionId = 1L, transactionType = "Expense")
-
-        transactionRepository.checkGetOrDeleteIsCalled(
-            1L,
-            "Expense"
-        )//this is get transaction method
-        getOrCreatePeriodUseCase.checkGetByIdIsCalled(1)
-        selectedStateLiveDataWrapper.checkUpdateIsCalled(
-            SelectedStateUi(
-                selectedCategory = "Other",
-                sum = 5000,
-                day = 15,
-                month = 10,
-                year = 2025,
-            )
+        transactionRepository.checkGetCalled(
+            calledId = 1L,
+            expectedType = "Expense",
+            1,
         )
+
+        getOrCreatePeriodUseCase.checkGetByIdIsCalled(1)
+        selectedStateLiveDataWrapper.checkUpdateIsCalled(expectedSelectedUi)
         uiStateLiveDataWrapper.check(
             CreateEditUiState.ShowEditTransactionPage(
                 title = "Edit Expense",
@@ -109,19 +93,16 @@ class CreateEditTransactionViewModelTest {
 
     @Test
     fun `create transaction test`() {
-        var mockedLiveData = MutableLiveData(SelectedStateUi("Utilities", 3000, 25, 10, 2025))
+        val mockedLiveData = MutableLiveData(expectedSelectedUi)
         selectedStateLiveDataWrapper.mockingLiveData(mockedLiveData)
-        getOrCreatePeriodUseCase.expectedYearMonth(YearMonth(1L, 10, 2025))
+        getOrCreatePeriodUseCase.expectedYearMonth(expectedYearMonth)
 
         viewModel.create(transactionType = "Expense")
 
         getOrCreatePeriodUseCase.checkInvokeIsCalled(expectedYear = 2025, expectedMonth = 10)
-        transactionRepository.checkOtherMethodsIsCalled(
-            Transaction(
-                105L,
-                3000, "Utilities", "Expense", 25, 1L
-            )
-        )//this is create transaction method
+        transactionRepository.checkCreateCalled(
+            expectedTransaction.copy(id = 105L, dateId = 1L), 1
+        )
         navigation.check(TransactionsListScreen)
         order.check(
             listOf(
@@ -136,30 +117,17 @@ class CreateEditTransactionViewModelTest {
     @Test
     fun `edit transaction test`() {
         val mockLiveData = MutableLiveData(
-            SelectedStateUi(
-                selectedCategory = "Other",
-                5000,
-                15,
-                12,
-                2025
-            )
+            expectedSelectedUi
         )
         selectedStateLiveDataWrapper.mockingLiveData(mockLiveData)
-        getOrCreatePeriodUseCase.expectedYearMonth(YearMonth(5L, 12, 2025))
+        getOrCreatePeriodUseCase.expectedYearMonth(expectedYearMonth)
 
         viewModel.edit(
-            2L, transactionType = "Expense"
+            1L, transactionType = "Expense"
         )
-        getOrCreatePeriodUseCase.checkInvokeIsCalled(expectedYear = 2025, expectedMonth = 12)
-        transactionRepository.checkOtherMethodsIsCalled(
-            Transaction(
-                2L,
-                5000,
-                "Other",
-                "Expense",
-                15,
-                5L
-            ) //method - edit transaction
+        getOrCreatePeriodUseCase.checkInvokeIsCalled(expectedYear = 2025, expectedMonth = 10)
+        transactionRepository.checkEditCalled(
+            editedTransaction = expectedTransaction.copy(1L, dateId = 1L), expectedCalledTimes = 1
         )
 
 
@@ -177,20 +145,10 @@ class CreateEditTransactionViewModelTest {
     @Test
     fun `delete transaction test`() {
         transactionRepository.expectedTransaction(
-            transaction = Transaction(
-                3L,
-                200,
-                "Transfers",
-                "Expense",
-                22,
-                44L,
-            )
+            expectedTransaction
         )
         viewModel.delete(transactionId = 3L)
-        transactionRepository.checkGetOrDeleteIsCalled(
-            expectedId = 3L,
-            "Expense"
-        ) //this is delete method
+        transactionRepository.checkDeleteCalled(calledId = 3L, 1)
         navigation.check(TransactionsListScreen)
         order.check(
             listOf(
@@ -207,14 +165,14 @@ class CreateEditTransactionViewModelTest {
     }
 
     @Test
-    fun`select category test`() {
+    fun `select category test`() {
         viewModel.selectCategory(category = "Kaspi Bank")
         selectedStateLiveDataWrapper.checkUpdateSelectedCategoryIsCalled("Kaspi Bank")
     }
 
     @Test
-    fun`select date test`() {
-        dateProvider.mockDate(12,10,2025)
+    fun `select date test`() {
+        dateProvider.mockDate(12, 10, 2025)
         viewModel.selectDate(date = 1728662400000)
         dateProvider.check(1728662400000)
         selectedStateLiveDataWrapper.checkUpdateSelectedDateIsCalled("12.10.2025")
@@ -397,19 +355,19 @@ private const val CREATE_TRANSACTION_REPOSITORY = "TransactionRepository#CreateT
 private interface FakeTransactionRepository : TransactionRepository.EditAndCreate {
 
     fun expectedTransaction(transaction: Transaction)
-    fun checkGetOrDeleteIsCalled(expectedId: Long, expectedType: String)
-    fun checkOtherMethodsIsCalled(expectedTransaction: Transaction)
-
+    fun checkGetCalled(calledId: Long, expectedType: String, expectedCalledTimes: Int)
+    fun checkDeleteCalled(calledId: Long, expectedCalledTimes: Int)
+    fun checkEditCalled(editedTransaction: Transaction, expectedCalledTimes: Int)
+    fun checkCreateCalled(createdTransaction: Transaction, expectedCalledTimes: Int)
     class Base(private val order: Order) : FakeTransactionRepository {
-
         private lateinit var actualTransaction: Transaction
-
         private var actualId: Long = 0L
         private lateinit var actualType: String
-
+        private var calledTimes = 0
         override suspend fun getOneTransaction(id: Long, type: String): Transaction {
             actualId = id
             actualType = type
+            calledTimes++
             order.add(GET_TRANSACTION_REPOSITORY)
             return actualTransaction
         }
@@ -422,6 +380,7 @@ private interface FakeTransactionRepository : TransactionRepository.EditAndCreat
             day: Int,
             dateId: Long
         ) {
+            calledTimes++
             actualTransaction = Transaction(transactionId, sum, name, type, day, dateId)
             order.add(EDIT_TRANSACTION_REPOSITORY)
         }
@@ -434,6 +393,7 @@ private interface FakeTransactionRepository : TransactionRepository.EditAndCreat
             dateId: Long
         ): Long {
             val mockedIdForCreate = 105L
+            calledTimes++
             actualTransaction = Transaction(id = mockedIdForCreate, sum, name, type, day, dateId)
             order.add(CREATE_TRANSACTION_REPOSITORY)
             return mockedIdForCreate
@@ -441,7 +401,7 @@ private interface FakeTransactionRepository : TransactionRepository.EditAndCreat
 
         override suspend fun deleteTransaction(id: Long) {
             actualId = id
-            actualType = actualTransaction.type
+            calledTimes++
             order.add(DELETE_TRANSACTION_REPOSITORY)
         }
 
@@ -449,15 +409,52 @@ private interface FakeTransactionRepository : TransactionRepository.EditAndCreat
             actualTransaction = transaction
         }
 
-        override fun checkGetOrDeleteIsCalled(expectedId: Long, expectedType: String) {
-
-            assertEquals(expectedId, actualId)
+        override fun checkGetCalled(
+            calledId: Long,
+            expectedType: String,
+            expectedCalledTimes: Int
+        ) {
+            assertEquals(calledId, actualId)
             assertEquals(expectedType, actualType)
-
+            assertEquals(expectedCalledTimes, calledTimes)
         }
 
-        override fun checkOtherMethodsIsCalled(expectedTransaction: Transaction) {
-            assertEquals(expectedTransaction, actualTransaction)
+        override fun checkDeleteCalled(calledId: Long, expectedCalledTimes: Int) {
+            assertEquals(calledId, actualId)
+            assertEquals(expectedCalledTimes, calledTimes)
+        }
+
+        override fun checkEditCalled(
+            editedTransaction: Transaction,
+            expectedCalledTimes: Int
+        ) {
+            assertEquals(editedTransaction, actualTransaction)
+            assertEquals(expectedCalledTimes, calledTimes)
+        }
+
+        override fun checkCreateCalled(
+            createdTransaction: Transaction,
+            expectedCalledTimes: Int
+        ) {
+            assertEquals(createdTransaction, actualTransaction)
+            assertEquals(expectedCalledTimes, calledTimes)
         }
     }
 }
+
+private val expectedYearMonth = YearMonth(1L, 10, 2025)
+private val expectedTransaction = Transaction(
+    id = 1L,
+    sum = 5000,
+    name = "Other",
+    type = "Expense",
+    day = 15,
+    dateId = 5L
+)
+private val expectedSelectedUi = SelectedStateUi(
+    selectedCategory = "Other",
+    sum = 5000,
+    day = 15,
+    month = 10,
+    year = 2025,
+)
