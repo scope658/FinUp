@@ -2,10 +2,12 @@ package com.example.finup.Transactions.list.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.test.espresso.contrib.RecyclerViewActions
 import com.example.finup.createEdit.presentation.CreateEditTransactionScreen
 import com.example.finup.Transactions.list.domain.StateManager
 import com.example.finup.Transactions.list.domain.TransactionsListUseCase
 import com.example.finup.Transactions.list.domain.NavigationMonthUseCase
+import com.example.finup.core.presentation.DispatchersList
 import com.example.finup.main.Navigation
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -22,18 +24,17 @@ class TransactionsListViewModel(
     private val navigationByMonthUseCase: NavigationMonthUseCase,
     private val navigation: Navigation.Update,
     private val stateManagerWrapper: StateManager.All,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
-    private val dispatcherMain: CoroutineDispatcher = Dispatchers.Main,
+    private val dispatchersList: DispatchersList,
 ) : ViewModel() {
 
     val mutex = Mutex()
     fun loadTransactions() {
-        viewModelScope.launch(dispatcher) {
+        viewModelScope.launch(dispatchersList.io()) {
             mutex.withLock {
                 val currentYearMonth = stateManagerWrapper.restoreYearMonth()
                 val currentScreenType = stateManagerWrapper.restoreCurrentScreenType()
                 val result = transactionsListUseCase(currentYearMonth, currentScreenType)
-                withContext(dispatcherMain) {
+                withContext(dispatchersList.ui()) {
                     val transactionListUi = transactionMapper.toUiLayer(
                         result.listTransactions,
                         result.formattedDateYearMonth
@@ -52,13 +53,13 @@ class TransactionsListViewModel(
     }
 
     fun navigateMonth(forward: Boolean) {
-        viewModelScope.launch(dispatcher) {
+        viewModelScope.launch(dispatchersList.io()) {
             val currentYearMonth = stateManagerWrapper.restoreYearMonth()
             val currentScreenType = stateManagerWrapper.restoreCurrentScreenType()
             val navigatedYearMonth = navigationByMonthUseCase(currentYearMonth, forward)
             stateManagerWrapper.saveYearMonthState(navigatedYearMonth.id)
             val result = transactionsListUseCase(navigatedYearMonth, currentScreenType)
-            withContext(dispatcherMain) {
+            withContext(dispatchersList.ui()) {
                 val transactionListUi = transactionMapper.toUiLayer(
                     result.listTransactions,
                     result.formattedDateYearMonth
@@ -87,7 +88,7 @@ class TransactionsListViewModel(
     }
 
     fun saveScreenType(screenType: String) {
-        viewModelScope.launch(dispatcher) {
+        viewModelScope.launch(dispatchersList.io()) {
             mutex.withLock {
                 stateManagerWrapper.saveCurrentScreenType(screenType)
             }
@@ -95,9 +96,9 @@ class TransactionsListViewModel(
     }
 
     fun createTransaction() {
-        viewModelScope.launch(dispatcher) {
+        viewModelScope.launch(dispatchersList.io()) {
             val screenType = stateManagerWrapper.restoreCurrentScreenType()
-            withContext(dispatcherMain) {
+            withContext(dispatchersList.ui()) {
                 navigation.update(CreateEditTransactionScreen("Create", 0L, screenType))
             }
         }

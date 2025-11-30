@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.finup.Transactions.list.presentation.TransactionsListScreen
 import com.example.finup.createEdit.domain.DateProvider
 import com.example.finup.Transactions.list.domain.TransactionRepository
+import com.example.finup.core.presentation.DispatchersList
 import com.example.finup.createEdit.domain.GetOrCreatePeriodUseCase
 import com.example.finup.main.Navigation
 import kotlinx.coroutines.CoroutineDispatcher
@@ -19,8 +20,7 @@ class CreateEditTransactionViewModel(
     private val navigation: Navigation.Update,
     private val selectedStateLiveDataWrapper: SelectedStateWrapper.Mutable,
     private val dateProvider: DateProvider.FormatLongToDateComponents,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
-    private val dispatcherMain: CoroutineDispatcher = Dispatchers.Main,
+    private val dispatchersList: DispatchersList,
 ) : ViewModel() {
 
 
@@ -29,10 +29,10 @@ class CreateEditTransactionViewModel(
     }
 
     fun editInit(title: String, transactionId: Long, transactionType: String) {
-        viewModelScope.launch(dispatcher) {
+        viewModelScope.launch(dispatchersList.io()) {
             val currentTransaction = repository.getOneTransaction(transactionId, transactionType)
             val currentYearMonth = getOrCreatePeriodUseCase.getById(currentTransaction.dateId)
-            withContext(dispatcherMain) {
+            withContext(dispatchersList.ui()) {
                 selectedStateLiveDataWrapper.update(
                     SelectedStateUi(
                         currentTransaction.name,
@@ -59,7 +59,7 @@ class CreateEditTransactionViewModel(
 
         val currentSelectedTypes = stateLiveData().value!!
 
-        viewModelScope.launch(dispatcher) {
+        viewModelScope.launch(dispatchersList.io()) {
 
             val currentYearMonth = getOrCreatePeriodUseCase(
                 currentSelectedTypes.year,
@@ -73,7 +73,7 @@ class CreateEditTransactionViewModel(
                 currentSelectedTypes.day,
                 currentYearMonth.id
             )
-            withContext(dispatcherMain) {
+            withContext(dispatchersList.ui()) {
                 navigation.update(TransactionsListScreen)
             }
         }
@@ -81,7 +81,7 @@ class CreateEditTransactionViewModel(
 
     fun create(transactionType: String) {
         val selectedInput = stateLiveData().value!!
-        viewModelScope.launch(dispatcher) {
+        viewModelScope.launch(dispatchersList.io()) {
 
             val yearMonth = getOrCreatePeriodUseCase(selectedInput.year, selectedInput.month)
             repository.createTransaction(
@@ -91,14 +91,14 @@ class CreateEditTransactionViewModel(
                 selectedInput.day,
                 yearMonth.id
             )
-            withContext(dispatcherMain) {
+            withContext(dispatchersList.ui()) {
                 navigation.update(TransactionsListScreen)
             }
         }
     }
 
     fun delete(transactionId: Long) {
-        viewModelScope.launch(dispatcher) {
+        viewModelScope.launch(dispatchersList.io()) {
             repository.deleteTransaction(transactionId)
         }
         navigation.update(TransactionsListScreen)

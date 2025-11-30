@@ -32,6 +32,8 @@ import com.example.finup.Transactions.list.domain.Transaction
 import com.example.finup.Transactions.list.presentation.TransactionsListUiState
 import com.example.finup.Transactions.list.presentation.TransactionListUiStateWrapper
 import com.example.finup.Transactions.list.presentation.TransactionUiMapper
+import com.example.finup.core.FakeDispatchersList
+import com.example.finup.core.presentation.DispatchersList
 
 @RunWith(RobolectricTestRunner::class)
 class TransactionsListViewModelTest {
@@ -57,6 +59,7 @@ class TransactionsListViewModelTest {
         navigationByMonthUseCase = FakeNavigationByMonthUseCase.Base(order)
         navigation = FakeNavigation.Base(order)
         stateManagerWrapper = FakeYearMonthStateManager.Base(order)
+        val dispatchersList = FakeDispatchersList()
         viewModel = TransactionsListViewModel(
             transactionsListWrapper = transactionsListWrapper,
             uiStateLiveDataWrapper = uiStateLiveDataWrapper,
@@ -65,8 +68,7 @@ class TransactionsListViewModelTest {
             navigationByMonthUseCase = navigationByMonthUseCase,
             navigation = navigation,
             stateManagerWrapper = stateManagerWrapper,
-            dispatcher = Dispatchers.Unconfined,
-            dispatcherMain = Dispatchers.Unconfined,
+            dispatchersList,
         )
     }
 

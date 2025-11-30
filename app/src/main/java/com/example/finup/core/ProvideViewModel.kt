@@ -24,6 +24,7 @@ import com.example.finup.Transactions.list.domain.StateManager
 import com.example.finup.createEdit.domain.GetOrCreatePeriodUseCase
 import com.example.finup.Transactions.list.domain.TransactionsListUseCase
 import com.example.finup.Transactions.list.domain.NavigationMonthUseCase
+import com.example.finup.core.presentation.DispatchersList
 import com.example.finup.main.MainViewModel
 import com.example.finup.main.Navigation
 
@@ -35,6 +36,7 @@ interface ProvideViewModel {
 
     class Base(transactionDao: TransactionDao, yearMonthDao: YearMonthDao, now: Now,dataStoreManager: DataStoreManagerImpl) :
         ViewModelProvider.Factory, ProvideViewModel {
+            private val dispatchersList = DispatchersList.Base()
         private val createEditUiStateWrapper = CreateEditUiStateWrapper.Base()
         private val transactionListWrapper = TransactionsListLiveDataWrapper.Base()
         private val transactionListUiStateWrapper = TransactionListUiStateWrapper.Base()
@@ -49,7 +51,7 @@ interface ProvideViewModel {
         private val getOrCreatePeriodUseCase = GetOrCreatePeriodUseCase.Base(yearMonthRepository)
         private val navigation = Navigation.Base()
         private val yearMonthStateRepository = SettingsStateRepositoryImpl(dataStoreManager)
-        private val stateManager = StateManager.Base(yearMonthRepository,  yearMonthStateRepository,fakeDateProvider)
+        private val stateManager = StateManager.Base(yearMonthRepository,  yearMonthStateRepository,dateProvider)
         private val stateLiveDataWrapper = SelectedStateWrapper.Base()
         override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
             return when (modelClass) {
@@ -61,7 +63,8 @@ interface ProvideViewModel {
                     transactionsListUseCase,
                     navigationMonthUseCase,
                     navigation,
-                    stateManager
+                    stateManager,
+                    dispatchersList,
                 )
 
                 CreateEditTransactionViewModel::class.java -> CreateEditTransactionViewModel(
@@ -71,9 +74,10 @@ interface ProvideViewModel {
                     navigation,
                     stateLiveDataWrapper,
                     dateProvider,
+                    dispatchersList,
                 )
 
-                else -> throw IllegalStateException("view Model doesnt exist, please watch provideVIewModel")
+                else -> throw IllegalStateException("viewModel does not exist")
             } as T
         }
 

@@ -10,6 +10,7 @@ import com.example.finup.createEdit.domain.DateProvider
 import com.example.finup.Transactions.list.domain.Transaction
 import com.example.finup.createEdit.domain.YearMonth
 import com.example.finup.Transactions.list.domain.TransactionRepository
+import com.example.finup.core.FakeDispatchersList
 import com.example.finup.createEdit.domain.GetOrCreatePeriodUseCase
 import com.example.finup.createEdit.presentation.CreateEditTransactionViewModel
 import com.example.finup.createEdit.presentation.CreateEditUiState
@@ -32,7 +33,6 @@ class CreateEditTransactionViewModelTest {
     private lateinit var navigation: FakeNavigation
     private lateinit var selectedStateLiveDataWrapper: FakeSelectedStateLiveDataWrapper
     private lateinit var dateProvider: FakeDateProvider
-
     @Before
     fun setUp() {
         order = Order()
@@ -42,6 +42,7 @@ class CreateEditTransactionViewModelTest {
         navigation = FakeNavigation.Base(order)
         selectedStateLiveDataWrapper = FakeSelectedStateLiveDataWrapper.Base(order)
         dateProvider = FakeDateProvider.Base(order)
+        val dispatchersList = FakeDispatchersList()
         viewModel = CreateEditTransactionViewModel(
             uiStateLiveDataWrapper = uiStateLiveDataWrapper,
             repository = transactionRepository,
@@ -49,8 +50,7 @@ class CreateEditTransactionViewModelTest {
             navigation = navigation,
             selectedStateLiveDataWrapper,
             dateProvider = dateProvider,
-            dispatcher = Dispatchers.Unconfined,
-            dispatcherMain = Dispatchers.Unconfined,
+            dispatchersList,
         )
     }
 
